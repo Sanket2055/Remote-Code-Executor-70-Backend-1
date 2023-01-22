@@ -43,8 +43,8 @@ app.all("*", (req, res) => {
 //     console.log(err);
 //   });
 
-app.listen(process.env.PORT, process.env.HOST, () => {
+app.listen(process.env.PORT, () => {
   console.log(
-    `APP LISTENING ON http://${process.env.HOST}:${process.env.PORT}`
+    `APP LISTENING ON port ${process.env.PORT}`
   );
 });
