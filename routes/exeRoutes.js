@@ -5,4 +5,6 @@ router.post("/exe-cpp", exeController.executeCPP);
 
 router.post("/exe-js", exeController.executeJS);
 
+router.post("/exe-py", exeController.executePY);
+
 module.exports = router;
