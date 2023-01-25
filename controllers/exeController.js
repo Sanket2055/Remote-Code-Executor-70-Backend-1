@@ -17,11 +17,9 @@ exports.executeCPP = async (req, res, next) => {
 
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
 
     // compile the code
@@ -38,6 +36,7 @@ exports.executeCPP = async (req, res, next) => {
       throw error;
     });
     const output = error || stderr || stdout;
+
     // unlink the files
     await fs.unlink(`${codePath}`);
     await fs.unlink(`${exePath}.exe`);
@@ -52,17 +51,14 @@ exports.executeJS = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
-    // join the path tmpdir and filename
     const codePath = path.join(tmpDir, fileName + ".js");
     const inputPath = path.join(tmpDir, fileName + ".txt");
 
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
     const { error, stdout, stderr } = await execAsync(
       `node ${codePath} < ${inputPath}`,
@@ -91,11 +87,9 @@ exports.executePY = async (req, res, next) => {
     const inputPath = path.join(tmpDir, fileName + ".txt");
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
-      // console.log("The file has been saved!");
     });
 
     const { error, stdout, stderr } = await execAsync(
@@ -107,7 +101,6 @@ exports.executePY = async (req, res, next) => {
       }
       throw error;
     });
-
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
     await fs.unlink(inputPath);
