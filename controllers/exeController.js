@@ -31,7 +31,7 @@ exports.executeCPP = async (req, res, next) => {
       { timeout: 2000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
-        throw new Error("Timeout exceeded");
+        throw new Error("Time limit exceeded");
       }
       throw error;
     });
@@ -65,7 +65,7 @@ exports.executeJS = async (req, res, next) => {
       { timeout: 2000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
-        throw new Error("Timeout exceeded");
+        throw new Error("Time limit exceeded");
       }
       throw error;
     });
@@ -97,7 +97,7 @@ exports.executePY = async (req, res, next) => {
       { timeout: 2000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
-        throw new Error("Timeout exceeded");
+        throw new Error("Time limit exceeded");
       }
       throw error;
     });
