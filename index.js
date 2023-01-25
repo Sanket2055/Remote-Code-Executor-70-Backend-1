@@ -52,6 +52,6 @@ app.use((err, req, res, next) => {
   console.log("ERROR HANDLER", err);
   return res.status(500).json({
     status: false,
-    message: err.message,
+    data: err.message,
   });
 });

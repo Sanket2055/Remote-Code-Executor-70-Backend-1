@@ -23,7 +23,7 @@ exports.executeCPP = async (req, res, next) => {
     });
 
     // compile the code
-    const compile = await execAsync(`g++ -o ${exePath}.exe ${codePath}`);
+    await execAsync(`g++ -o ${exePath}.exe ${codePath}`);
 
     // run the code
     const { error, stdout, stderr } = await execAsync(
