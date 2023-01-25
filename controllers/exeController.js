@@ -29,9 +29,14 @@ exports.executeCPP = async (req, res, next) => {
 
     // run the code
     const { error, stdout, stderr } = await execAsync(
-      `${exePath}.exe < ${inputPath}`
-    );
-
+      `${exePath}.exe < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Timeout exceeded");
+      }
+      throw error;
+    });
     const output = error || stderr || stdout;
     // unlink the files
     await fs.unlink(`${codePath}`);
@@ -60,8 +65,14 @@ exports.executeJS = async (req, res, next) => {
       // console.log("The file has been saved!");
     });
     const { error, stdout, stderr } = await execAsync(
-      `node ${codePath} < ${inputPath}`
-    );
+      `node ${codePath} < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Timeout exceeded");
+      }
+      throw error;
+    });
 
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
@@ -88,8 +99,15 @@ exports.executePY = async (req, res, next) => {
     });
 
     const { error, stdout, stderr } = await execAsync(
-      `python3 ${codePath} < ${inputPath}`
-    );
+      `python3 ${codePath} < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Timeout exceeded");
+      }
+      throw error;
+    });
+
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
     await fs.unlink(inputPath);
