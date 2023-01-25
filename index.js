@@ -44,7 +44,14 @@ app.all("*", (req, res) => {
 //   });
 
 app.listen(process.env.PORT, () => {
-  console.log(
-    `APP LISTENING ON port ${process.env.PORT}`
-  );
+  console.log(`APP LISTENING ON port ${process.env.PORT}`);
+});
+
+// error handler
+app.use((err, req, res, next) => {
+  console.log("ERROR HANDLER", err);
+  return res.status(500).json({
+    status: false,
+    message: err.message,
+  });
 });

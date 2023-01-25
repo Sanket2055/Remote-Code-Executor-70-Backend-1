@@ -39,7 +39,7 @@ exports.executeCPP = async (req, res, next) => {
     await fs.unlink(`${inputPath}`);
     res.json({ data: output, status: true });
   } catch (err) {
-    res.status(500).json({ data: err.stderr, status: false });
+    next(err);
   }
 };
 
@@ -68,7 +68,7 @@ exports.executeJS = async (req, res, next) => {
     await fs.unlink(inputPath);
     res.json({ data: output, status: true });
   } catch (err) {
-    res.status(500).json({ data: err.stderr, status: false });
+    next(err);
   }
 };
 
@@ -95,6 +95,6 @@ exports.executePY = async (req, res, next) => {
     await fs.unlink(inputPath);
     res.json({ data: output, status: true });
   } catch (err) {
-    res.status(500).json({ data: err.stderr, status: false });
+    next(err);
   }
 };
