@@ -88,7 +88,7 @@ exports.executePY = async (req, res, next) => {
     });
 
     const { error, stdout, stderr } = await execAsync(
-      `python ${codePath} < ${inputPath}`
+      `python3 ${codePath} < ${inputPath}`
     );
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
