@@ -7,7 +7,7 @@ const { generateFileName } = require("../helpers/generateName");
 const util = require("util");
 const execAsync = util.promisify(exec);
 
-exports.executeCPP = async (req, res, next) => {
+exports.executeCpp = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const codePath = path.join(tmpDir, fileName + ".cpp");
@@ -47,7 +47,7 @@ exports.executeCPP = async (req, res, next) => {
   }
 };
 
-exports.executeJS = async (req, res, next) => {
+exports.executeJavaScript = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
@@ -79,7 +79,7 @@ exports.executeJS = async (req, res, next) => {
   }
 };
 
-exports.executePY = async (req, res, next) => {
+exports.executePython = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
@@ -150,7 +150,7 @@ exports.executeC = async (req, res, next) => {
   }
 };
 
-exports.executeGO = async (req, res, next) => {
+exports.executeGo = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
@@ -181,7 +181,7 @@ exports.executeGO = async (req, res, next) => {
   }
 };
 
-exports.executeJAVA = async (req, res, next) => {
+exports.executeJava = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
