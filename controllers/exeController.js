@@ -109,3 +109,69 @@ exports.executePY = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.executeJAVA = async (req, res, next) => {
+  try {
+    const fileName = await generateFileName();
+    console.log("mkdir", tmpDir);
+
+    const { code, input = "" } = req.body;
+    const codePath = path.join(tmpDir, fileName + ".java");
+    const inputPath = path.join(tmpDir, fileName + ".txt");
+    await fs.writeFile(codePath, code, function (err) {
+      if (err) throw err;
+    });
+    await fs.writeFile(inputPath, input, function (err) {
+      if (err) throw err;
+    });
+
+    const { error, stdout, stderr } = await execAsync(
+      `java ${codePath} < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Time limit exceeded");
+      }
+      throw error;
+    });
+    const output = error || stderr || stdout;
+    await fs.unlink(codePath);
+    await fs.unlink(inputPath);
+    res.json({ data: output, status: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.executeGO = async (req, res, next) => {
+  try {
+    const fileName = await generateFileName();
+    console.log("mkdir", tmpDir);
+
+    const { code, input = "" } = req.body;
+    const codePath = path.join(tmpDir, fileName + ".go");
+    const inputPath = path.join(tmpDir, fileName + ".txt");
+    await fs.writeFile(codePath, code, function (err) {
+      if (err) throw err;
+    });
+    await fs.writeFile(inputPath, input, function (err) {
+      if (err) throw err;
+    });
+
+    const { error, stdout, stderr } = await execAsync(
+      `go run ${codePath} < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Time limit exceeded");
+      }
+      throw error;
+    });
+    const output = error || stderr || stdout;
+    await fs.unlink(codePath);
+    await fs.unlink(inputPath);
+    res.json({ data: output, status: true });
+  } catch (err) {
+    next(err);
+  }
+};
