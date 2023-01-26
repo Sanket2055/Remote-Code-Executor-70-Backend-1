@@ -83,7 +83,7 @@ exports.executePY = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
     const { code, input = "" } = req.body;
-    const codePath = path.join(tmpDir, fileName + ".js");
+    const codePath = path.join(tmpDir, fileName + ".py");
     const inputPath = path.join(tmpDir, fileName + ".txt");
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
@@ -110,13 +110,51 @@ exports.executePY = async (req, res, next) => {
   }
 };
 
-exports.executeJAVA = async (req, res, next) => {
+exports.executeC = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
-    console.log("mkdir", tmpDir);
-
+    const codePath = path.join(tmpDir, fileName + ".c");
+    const inputPath = path.join(tmpDir, fileName + ".txt");
+    const exePath = path.join(tmpDir, fileName);
     const { code, input = "" } = req.body;
-    const codePath = path.join(tmpDir, fileName + ".java");
+
+    await fs.writeFile(codePath, code, function (err) {
+      if (err) throw err;
+    });
+    await fs.writeFile(inputPath, input, function (err) {
+      if (err) throw err;
+    });
+
+    // compile the code
+    await execAsync(`gcc -o ${exePath}.exe ${codePath}`);
+
+    // run the code
+    const { error, stdout, stderr } = await execAsync(
+      `${exePath}.exe < ${inputPath}`,
+      { timeout: 2000 }
+    ).catch((error) => {
+      if (error.killed && error.signal === "SIGTERM") {
+        throw new Error("Time limit exceeded");
+      }
+      throw error;
+    });
+    const output = error || stderr || stdout;
+
+    // unlink the files
+    await fs.unlink(`${codePath}`);
+    await fs.unlink(`${exePath}.exe`);
+    await fs.unlink(`${inputPath}`);
+    res.json({ data: output, status: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.executeGO = async (req, res, next) => {
+  try {
+    const fileName = await generateFileName();
+    const { code, input = "" } = req.body;
+    const codePath = path.join(tmpDir, fileName + ".go");
     const inputPath = path.join(tmpDir, fileName + ".txt");
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
@@ -126,7 +164,7 @@ exports.executeJAVA = async (req, res, next) => {
     });
 
     const { error, stdout, stderr } = await execAsync(
-      `java ${codePath} < ${inputPath}`,
+      `go run ${codePath} < ${inputPath}`,
       { timeout: 2000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
@@ -143,13 +181,11 @@ exports.executeJAVA = async (req, res, next) => {
   }
 };
 
-exports.executeGO = async (req, res, next) => {
+exports.executeJAVA = async (req, res, next) => {
   try {
     const fileName = await generateFileName();
-    console.log("mkdir", tmpDir);
-
     const { code, input = "" } = req.body;
-    const codePath = path.join(tmpDir, fileName + ".go");
+    const codePath = path.join(tmpDir, fileName + ".java");
     const inputPath = path.join(tmpDir, fileName + ".txt");
     await fs.writeFile(codePath, code, function (err) {
       if (err) throw err;
@@ -159,7 +195,7 @@ exports.executeGO = async (req, res, next) => {
     });
 
     const { error, stdout, stderr } = await execAsync(
-      `go run ${codePath} < ${inputPath}`,
+      `java ${codePath} < ${inputPath}`,
       { timeout: 2000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
