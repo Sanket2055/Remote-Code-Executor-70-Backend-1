@@ -21,10 +21,11 @@ exports.executeCpp = async (req, res, next) => {
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
     });
-
+    const startTime = new Date().getTime();
     // compile the code
     await execAsync(`g++ -o ${exePath}.exe ${codePath}`);
-
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
     // run the code
     const { error, stdout, stderr } = await execAsync(
       `${exePath}.exe < ${inputPath}`,
@@ -41,7 +42,7 @@ exports.executeCpp = async (req, res, next) => {
     await fs.unlink(`${codePath}`);
     await fs.unlink(`${exePath}.exe`);
     await fs.unlink(`${inputPath}`);
-    res.json({ data: output, status: true });
+    res.json({ data: output, status: true, executionTime: executionTime });
   } catch (err) {
     next(err);
   }
@@ -60,20 +61,22 @@ exports.executeJavaScript = async (req, res, next) => {
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
     });
+    const startTime = new Date().getTime();
     const { error, stdout, stderr } = await execAsync(
       `node ${codePath} < ${inputPath}`,
-      { timeout: 2000 }
+      { timeout: 10000 }
     ).catch((error) => {
       if (error.killed && error.signal === "SIGTERM") {
         throw new Error("Time limit exceeded");
       }
       throw error;
     });
-
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
     await fs.unlink(inputPath);
-    res.json({ data: output, status: true });
+    res.json({ data: output, status: true, executionTime: executionTime });
   } catch (err) {
     next(err);
   }
@@ -91,7 +94,7 @@ exports.executePython = async (req, res, next) => {
     await fs.writeFile(inputPath, input, function (err) {
       if (err) throw err;
     });
-
+    const startTime = new Date().getTime();
     const { error, stdout, stderr } = await execAsync(
       `python3 ${codePath} < ${inputPath}`,
       { timeout: 2000 }
@@ -101,10 +104,12 @@ exports.executePython = async (req, res, next) => {
       }
       throw error;
     });
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
     await fs.unlink(inputPath);
-    res.json({ data: output, status: true });
+    res.json({ data: output, status: true, executionTime: executionTime });
   } catch (err) {
     next(err);
   }
@@ -127,7 +132,7 @@ exports.executeC = async (req, res, next) => {
 
     // compile the code
     await execAsync(`gcc -o ${exePath}.exe ${codePath}`);
-
+    const startTime = new Date().getTime();
     // run the code
     const { error, stdout, stderr } = await execAsync(
       `${exePath}.exe < ${inputPath}`,
@@ -138,13 +143,15 @@ exports.executeC = async (req, res, next) => {
       }
       throw error;
     });
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
     const output = error || stderr || stdout;
 
     // unlink the files
     await fs.unlink(`${codePath}`);
     await fs.unlink(`${exePath}.exe`);
     await fs.unlink(`${inputPath}`);
-    res.json({ data: output, status: true });
+    res.json({ data: output, status: true, executionTime: executionTime });
   } catch (err) {
     next(err);
   }
@@ -194,6 +201,7 @@ exports.executeJava = async (req, res, next) => {
       if (err) throw err;
     });
 
+    const startTime = new Date().getTime();
     const { error, stdout, stderr } = await execAsync(
       `java ${codePath} < ${inputPath}`,
       { timeout: 2000 }
@@ -203,10 +211,12 @@ exports.executeJava = async (req, res, next) => {
       }
       throw error;
     });
+    const endTime = new Date().getTime();
+    const executionTime = endTime - startTime;
     const output = error || stderr || stdout;
     await fs.unlink(codePath);
     await fs.unlink(inputPath);
-    res.json({ data: output, status: true });
+    res.json({ data: output, status: true, executionTime: executionTime });
   } catch (err) {
     next(err);
   }
