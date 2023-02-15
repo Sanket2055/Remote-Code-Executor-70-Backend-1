@@ -17,6 +17,24 @@
 
 Follow the steps below to get run the app in the local environment.
 
+### Prerequisites
+
+Make sure that you have g++, gcc, python3, nodejs and java installed on your system. Type the following commands in your terminal to check if they are installed.
+
+```sh
+g++ --version 
+gcc --version
+python3 --version
+node --version
+java --version
+```
+
+If required, run the following command to install the required dependencies.
+
+```sh
+sudo apt install -y build-essential nodejs default-jre
+```
+
 ### Installation
 
 1. Clone the repo
